@@ -5,6 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.minimatch"
+
     compileSdk {
         version = release(37)
     }
@@ -27,6 +28,7 @@ android {
             }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -40,8 +42,10 @@ dependencies {
     implementation(libs.credentials)
     implementation(libs.credentials.play.services.auth)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     implementation(libs.googleid)
     implementation(libs.material)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)

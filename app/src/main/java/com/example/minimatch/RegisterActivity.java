@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -22,9 +23,11 @@ public class RegisterActivity extends Activity {
 
     private FirebaseAuth mAuth;
 
-    private final int pink = Color.rgb(217, 79, 120);
-    private final int dark = Color.rgb(63, 35, 43);
-    private final int background = Color.rgb(255, 245, 241);
+    private final int orange = Color.rgb(235, 137, 65);
+    private final int dark = Color.rgb(57, 43, 34);
+    private final int background = Color.rgb(250, 246, 239);
+    private final int muted = Color.rgb(135, 119, 106);
+    private final int white = Color.WHITE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,59 +37,93 @@ public class RegisterActivity extends Activity {
 
         getWindow().setStatusBarColor(background);
         getWindow().setNavigationBarColor(background);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR |
+                        View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        );
+
+        createScreen();
+    }
+
+    private void createScreen() {
 
         ScrollView scrollView = new ScrollView(this);
         scrollView.setFillViewport(true);
+        scrollView.setBackgroundColor(background);
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setGravity(Gravity.CENTER_HORIZONTAL);
-        root.setPadding(dp(24), dp(25), dp(24), dp(30));
-        root.setBackgroundColor(background);
+        root.setPadding(dp(25), dp(25), dp(25), dp(30));
 
         scrollView.addView(root);
+        setContentView(scrollView);
 
-        TextView heart = new TextView(this);
-        heart.setText("♥");
-        heart.setTextSize(48);
-        heart.setTextColor(pink);
-        heart.setGravity(Gravity.CENTER);
-        root.addView(heart);
+        // Logo
+        TextView logo = new TextView(this);
+        logo.setText("🐾  DogMatch");
+        logo.setTextSize(25);
+        logo.setTextColor(dark);
+        logo.setTypeface(null, Typeface.BOLD);
+        logo.setGravity(Gravity.CENTER);
 
+        LinearLayout.LayoutParams logoParams =
+                new LinearLayout.LayoutParams(-1, dp(55));
+        logoParams.setMargins(0, 0, 0, dp(22));
+        root.addView(logo, logoParams);
+
+        // Dog icon
+        TextView dog = new TextView(this);
+        dog.setText("🐶");
+        dog.setTextSize(55);
+        dog.setGravity(Gravity.CENTER);
+
+        LinearLayout.LayoutParams dogParams =
+                new LinearLayout.LayoutParams(-1, dp(85));
+        dogParams.setMargins(0, 0, 0, dp(8));
+        root.addView(dog, dogParams);
+
+        // Title
         TextView title = new TextView(this);
-        title.setText("יוצרים חשבון!");
-        title.setTextSize(28);
+        title.setText("מצטרפים ל-DogMatch");
+        title.setTextSize(27);
         title.setTextColor(dark);
         title.setTypeface(null, Typeface.BOLD);
         title.setGravity(Gravity.CENTER);
         root.addView(title);
 
+        // Subtitle
         TextView subtitle = new TextView(this);
-        subtitle.setText("אולי כאן מתחיל סיפור יפה ❤️");
+        subtitle.setText(
+                "פותחים חשבון ומוצאים חברים חדשים\n" +
+                        "לחבר הכי טוב שלכם"
+        );
         subtitle.setTextSize(15);
-        subtitle.setTextColor(Color.rgb(135, 105, 112));
+        subtitle.setTextColor(muted);
         subtitle.setGravity(Gravity.CENTER);
+        subtitle.setLineSpacing(dp(5), 1f);
 
         LinearLayout.LayoutParams subtitleParams =
                 new LinearLayout.LayoutParams(-1, -2);
-        subtitleParams.setMargins(0, dp(8), 0, dp(22));
+        subtitleParams.setMargins(0, dp(10), 0, dp(25));
         root.addView(subtitle, subtitleParams);
 
+        // Form card
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(20), dp(22), dp(20), dp(22));
-        card.setBackground(rounded(Color.WHITE, 22));
+        card.setBackground(rounded(white, 22));
         card.setElevation(dp(5));
 
         TextView sectionTitle = new TextView(this);
-        sectionTitle.setText("פרטים ליצירת החשבון");
+        sectionTitle.setText("פרטי בעל החשבון");
         sectionTitle.setTextSize(20);
         sectionTitle.setTextColor(dark);
         sectionTitle.setTypeface(null, Typeface.BOLD);
         sectionTitle.setGravity(Gravity.RIGHT);
         card.addView(sectionTitle);
 
-        EditText name = createField("שם מלא");
+        EditText name = createField("השם שלך");
         addField(card, "איך קוראים לך?", name);
 
         EditText age = createField("גיל");
@@ -101,36 +138,41 @@ public class RegisterActivity extends Activity {
         password.setInputType(129);
         addField(card, "סיסמה", password);
 
+        // Register button
         Button register = new Button(this);
-        register.setText("יצירת חשבון ❤️");
+        register.setText("יצירת חשבון");
         register.setTextSize(17);
         register.setTypeface(null, Typeface.BOLD);
-        register.setTextColor(Color.WHITE);
+        register.setTextColor(white);
         register.setAllCaps(false);
-        register.setBackground(rounded(pink, 16));
+        register.setBackground(rounded(orange, 17));
 
         LinearLayout.LayoutParams buttonParams =
-                new LinearLayout.LayoutParams(-1, dp(55));
+                new LinearLayout.LayoutParams(-1, dp(56));
         buttonParams.setMargins(0, dp(25), 0, 0);
         card.addView(register, buttonParams);
 
         root.addView(card, new LinearLayout.LayoutParams(-1, -2));
 
-        TextView footer = new TextView(this);
-        footer.setText("כבר יש לך חשבון? התחברות");
-        footer.setTextSize(15);
-        footer.setTextColor(pink);
-        footer.setGravity(Gravity.CENTER);
-        footer.setPadding(0, dp(22), 0, dp(10));
-        root.addView(footer);
+        // Login link
+        TextView login = new TextView(this);
+        login.setText("כבר יש לך חשבון? התחברות");
+        login.setTextSize(15);
+        login.setTextColor(orange);
+        login.setTypeface(null, Typeface.BOLD);
+        login.setGravity(Gravity.CENTER);
+        login.setPadding(0, dp(24), 0, dp(10));
+        root.addView(login);
 
-        footer.setOnClickListener(v -> {
-            startActivity(new Intent(this, LoginActivity.class));
+        login.setOnClickListener(v -> {
+            startActivity(new Intent(
+                    RegisterActivity.this,
+                    LoginActivity.class
+            ));
             finish();
         });
 
-        setContentView(scrollView);
-
+        // Registration logic
         register.setOnClickListener(v -> {
 
             String userName = name.getText().toString().trim();
@@ -175,57 +217,59 @@ public class RegisterActivity extends Activity {
             register.setEnabled(false);
             register.setText("יוצרים חשבון...");
 
-            mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
-                    .addOnCompleteListener(task -> {
+            mAuth.createUserWithEmailAndPassword(
+                    userEmail, userPassword
+            ).addOnCompleteListener(task -> {
 
-                        if (task.isSuccessful()) {
+                if (task.isSuccessful()) {
 
-                            UserProfileChangeRequest profileUpdates =
-                                    new UserProfileChangeRequest.Builder()
-                                            .setDisplayName(userName)
-                                            .build();
+                    UserProfileChangeRequest profileUpdates =
+                            new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(userName)
+                                    .build();
 
-                            mAuth.getCurrentUser()
-                                    .updateProfile(profileUpdates)
-                                    .addOnCompleteListener(profileTask -> {
+                    mAuth.getCurrentUser()
+                            .updateProfile(profileUpdates)
+                            .addOnCompleteListener(profileTask -> {
 
-                                        if (profileTask.isSuccessful()) {
+                                if (profileTask.isSuccessful()) {
 
-                                            Intent intent = new Intent(
-                                                    RegisterActivity.this,
-                                                    ProfileActivity.class
-                                            );
+                                    Intent intent = new Intent(
+                                            RegisterActivity.this,
+                                            ProfileActivity.class
+                                    );
 
-                                            intent.putExtra("USER_AGE", userAge);
+                                    intent.putExtra("USER_AGE", userAge);
+                                    intent.putExtra("USER_NAME", userName);
 
-                                            startActivity(intent);
-                                            finish();
+                                    startActivity(intent);
+                                    finish();
 
-                                        } else {
+                                } else {
 
-                                            Toast.makeText(this,
-                                                    "החשבון נוצר, אך עדכון השם נכשל",
-                                                    Toast.LENGTH_LONG).show();
+                                    Toast.makeText(this,
+                                            "החשבון נוצר, אך עדכון השם נכשל",
+                                            Toast.LENGTH_LONG).show();
 
-                                            register.setEnabled(true);
-                                            register.setText("יצירת חשבון ❤️");
-                                        }
-                                    });
+                                    register.setEnabled(true);
+                                    register.setText("יצירת חשבון");
+                                }
+                            });
 
-                        } else {
+                } else {
 
-                            String error = task.getException() != null
-                                    ? task.getException().getMessage()
-                                    : "אירעה שגיאה לא ידועה";
+                    String error = task.getException() != null
+                            ? task.getException().getMessage()
+                            : "אירעה שגיאה לא ידועה";
 
-                            Toast.makeText(this,
-                                    "שגיאה בהרשמה: " + error,
-                                    Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,
+                            "שגיאה בהרשמה: " + error,
+                            Toast.LENGTH_LONG).show();
 
-                            register.setEnabled(true);
-                            register.setText("יצירת חשבון ❤️");
-                        }
-                    });
+                    register.setEnabled(true);
+                    register.setText("יצירת חשבון");
+                }
+            });
         });
     }
 
@@ -253,11 +297,11 @@ public class RegisterActivity extends Activity {
         field.setHint(hint);
         field.setTextSize(15);
         field.setTextColor(dark);
-        field.setHintTextColor(Color.rgb(165, 145, 150));
+        field.setHintTextColor(muted);
         field.setPadding(dp(14), dp(10), dp(14), dp(10));
         field.setSingleLine(true);
         field.setBackground(rounded(
-                Color.rgb(255, 248, 247), 13
+                Color.rgb(250, 247, 242), 13
         ));
 
         field.setLayoutParams(

@@ -11,14 +11,17 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ScrollView;
 
 public class MainActivity extends Activity {
 
-    LinearLayout mainLayout;
+    private LinearLayout mainLayout;
 
-    int backgroundColor = Color.rgb(255, 245, 241);
-    int pinkColor = Color.rgb(217, 79, 120);
-    int textColor = Color.rgb(63, 35, 43);
+    private final int backgroundColor = Color.rgb(250, 246, 239);
+    private final int orangeColor = Color.rgb(235, 137, 65);
+    private final int darkColor = Color.rgb(57, 43, 34);
+    private final int mutedColor = Color.rgb(135, 119, 106);
+    private final int whiteColor = Color.WHITE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,67 +40,91 @@ public class MainActivity extends Activity {
 
     private void createScreen() {
 
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.setFillViewport(true);
+        scrollView.setBackgroundColor(backgroundColor);
+
         mainLayout = new LinearLayout(this);
         mainLayout.setOrientation(LinearLayout.VERTICAL);
         mainLayout.setGravity(Gravity.CENTER);
-        mainLayout.setPadding(30, 20, 30, 20);
-        mainLayout.setBackgroundColor(backgroundColor);
+        mainLayout.setPadding(dp(28), dp(30), dp(28), dp(30));
 
-        setContentView(mainLayout);
+        scrollView.addView(mainLayout);
+        setContentView(scrollView);
 
-        TextView heart = new TextView(this);
-        heart.setText("♥");
-        heart.setTextSize(48);
-        heart.setTextColor(pinkColor);
-        heart.setGravity(Gravity.CENTER);
-        mainLayout.addView(heart);
+        // Logo
+        TextView logo = new TextView(this);
+        logo.setText("🐾  DogMatch");
+        logo.setTextSize(29);
+        logo.setTextColor(darkColor);
+        logo.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        logo.setGravity(Gravity.CENTER);
 
+        LinearLayout.LayoutParams logoParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+
+        logoParams.setMargins(0, 0, 0, dp(35));
+        mainLayout.addView(logo, logoParams);
+
+        // Dog illustration area
+        LinearLayout dogContainer = new LinearLayout(this);
+        dogContainer.setGravity(Gravity.CENTER);
+        dogContainer.setBackground(createRounded(
+                Color.rgb(255, 232, 207), 150
+        ));
+
+        TextView dog = new TextView(this);
+        dog.setText("🐕");
+        dog.setTextSize(105);
+        dog.setGravity(Gravity.CENTER);
+
+        dogContainer.addView(dog);
+
+        LinearLayout.LayoutParams dogParams =
+                new LinearLayout.LayoutParams(dp(220), dp(220));
+
+        dogParams.setMargins(0, 0, 0, dp(30));
+        mainLayout.addView(dogContainer, dogParams);
+
+        // Main title
         TextView title = new TextView(this);
-        title.setText("אהבה קטנה");
-        title.setTextSize(38);
-        title.setTextColor(textColor);
+        title.setText("החבר הבא של הכלב שלך");
+        title.setTextSize(27);
+        title.setTextColor(darkColor);
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         title.setGravity(Gravity.CENTER);
+
         mainLayout.addView(title);
 
-        TextView carrot = new TextView(this);
-        carrot.setText("🥕");
-        carrot.setTextSize(100);
-        carrot.setGravity(Gravity.CENTER);
-
-        LinearLayout.LayoutParams carrotParams =
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                );
-
-        carrotParams.setMargins(0, 25, 0, 25);
-        mainLayout.addView(carrot, carrotParams);
-
+        // Subtitle
         TextView subtitle = new TextView(this);
-        subtitle.setText("כי גם לגמדים מגיע למצוא אהבה");
-        subtitle.setTextSize(17);
-        subtitle.setTextColor(textColor);
+        subtitle.setText(
+                "מכירים כלבים חדשים, יוצרים חברויות\n" +
+                        "ויוצאים יחד להרפתקאות"
+        );
+        subtitle.setTextSize(16);
+        subtitle.setTextColor(mutedColor);
         subtitle.setGravity(Gravity.CENTER);
-        mainLayout.addView(subtitle);
+        subtitle.setLineSpacing(dp(5), 1f);
 
-        TextView description = new TextView(this);
-        description.setText("מכירים. מתחברים. יוצאים לדייט.");
-        description.setTextSize(14);
-        description.setTextColor(Color.rgb(130, 105, 110));
-        description.setGravity(Gravity.CENTER);
-
-        LinearLayout.LayoutParams descriptionParams =
+        LinearLayout.LayoutParams subtitleParams =
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                 );
 
-        descriptionParams.setMargins(0, 30, 0, 35);
-        mainLayout.addView(description, descriptionParams);
+        subtitleParams.setMargins(0, dp(12), 0, dp(38));
+        mainLayout.addView(subtitle, subtitleParams);
 
-        // כפתור התחברות
-        TextView loginButton = createButton("יש לי חשבון – התחברות", true);
+        // Login button
+        TextView loginButton = createButton(
+                "התחברות",
+                true
+        );
+
         mainLayout.addView(loginButton);
 
         loginButton.setOnClickListener(v -> {
@@ -108,16 +135,19 @@ public class MainActivity extends Activity {
             startActivity(intent);
         });
 
-        // כפתור הרשמה
-        TextView registerButton = createButton("משתמש חדש – הרשמה", false);
+        // Register button
+        TextView registerButton = createButton(
+                "יצירת חשבון חדש",
+                false
+        );
 
         LinearLayout.LayoutParams registerParams =
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
-                        60
+                        dp(58)
                 );
 
-        registerParams.setMargins(0, 15, 0, 0);
+        registerParams.setMargins(0, dp(13), 0, 0);
         mainLayout.addView(registerButton, registerParams);
 
         registerButton.setOnClickListener(v -> {
@@ -127,40 +157,72 @@ public class MainActivity extends Activity {
             );
             startActivity(intent);
         });
+
+        // Bottom caption
+        TextView footer = new TextView(this);
+        footer.setText("A better friend for every dog.");
+        footer.setTextSize(12);
+        footer.setTextColor(mutedColor);
+        footer.setGravity(Gravity.CENTER);
+
+        LinearLayout.LayoutParams footerParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+
+        footerParams.setMargins(0, dp(30), 0, 0);
+        mainLayout.addView(footer, footerParams);
     }
 
     private TextView createButton(String text, boolean filled) {
 
         TextView button = new TextView(this);
+
         button.setText(text);
         button.setTextSize(17);
         button.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         button.setGravity(Gravity.CENTER);
-        button.setClickable(true);
-        button.setFocusable(true);
-
-        GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(50);
+        button.setAllCaps(false);
 
         if (filled) {
-            background.setColor(pinkColor);
-            button.setTextColor(Color.WHITE);
+            button.setTextColor(whiteColor);
+            button.setBackground(createRounded(orangeColor, 18));
         } else {
-            background.setColor(backgroundColor);
-            background.setStroke(3, pinkColor);
-            button.setTextColor(pinkColor);
+            button.setTextColor(darkColor);
+            GradientDrawable outline =
+                    createRounded(backgroundColor, 18);
+
+            outline.setStroke(dp(2), orangeColor);
+            button.setBackground(outline);
         }
 
-        button.setBackground(background);
+        button.setElevation(dp(2));
+        button.setClickable(true);
+        button.setFocusable(true);
 
         LinearLayout.LayoutParams params =
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
-                        60
+                        dp(58)
                 );
 
         button.setLayoutParams(params);
 
         return button;
+    }
+
+    private GradientDrawable createRounded(int color, int radius) {
+
+        GradientDrawable shape = new GradientDrawable();
+        shape.setColor(color);
+        shape.setCornerRadius(dp(radius));
+
+        return shape;
+    }
+
+    private int dp(int value) {
+        return (int) (value * getResources()
+                .getDisplayMetrics().density);
     }
 }

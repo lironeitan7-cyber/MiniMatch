@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -16,20 +15,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends Activity {
 
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
-    private final int pink = Color.rgb(217, 79, 120);
-    private final int dark = Color.rgb(63, 35, 43);
-    private final int background = Color.rgb(255, 245, 241);
+    private final int orange = Color.rgb(235, 137, 65);
+    private final int dark = Color.rgb(57, 43, 34);
+    private final int background = Color.rgb(250, 246, 239);
+    private final int muted = Color.rgb(135, 119, 106);
+    private final int white = Color.WHITE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        getWindow().setStatusBarColor(background);
+        getWindow().setNavigationBarColor(background);
+        getWindow().getDecorView().setSystemUiVisibility(
+                android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR |
+                        android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        );
+
+        createScreen();
+    }
+
+    private void createScreen() {
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -37,38 +53,47 @@ public class LoginActivity extends Activity {
         root.setPadding(dp(25), dp(30), dp(25), dp(30));
         root.setBackgroundColor(background);
 
-        TextView heart = new TextView(this);
-        heart.setText("♥");
-        heart.setTextSize(55);
-        heart.setTextColor(pink);
-        heart.setGravity(Gravity.CENTER);
-        root.addView(heart);
+        TextView logo = new TextView(this);
+        logo.setText("🐾  DogMatch");
+        logo.setTextSize(25);
+        logo.setTextColor(dark);
+        logo.setTypeface(null, Typeface.BOLD);
+        logo.setGravity(Gravity.CENTER);
+        root.addView(logo);
+
+        TextView dogIcon = new TextView(this);
+        dogIcon.setText("🐶");
+        dogIcon.setTextSize(65);
+        dogIcon.setGravity(Gravity.CENTER);
+
+        LinearLayout.LayoutParams iconParams =
+                new LinearLayout.LayoutParams(-1, dp(105));
+        iconParams.setMargins(0, dp(15), 0, dp(5));
+        root.addView(dogIcon, iconParams);
 
         TextView title = new TextView(this);
         title.setText("איזה כיף שחזרת!");
-        title.setTextSize(29);
+        title.setTextSize(28);
         title.setTextColor(dark);
         title.setTypeface(null, Typeface.BOLD);
         title.setGravity(Gravity.CENTER);
         root.addView(title);
 
         TextView subtitle = new TextView(this);
-        subtitle.setText("האהבה אולי מחכה לך כאן ❤️");
-        subtitle.setTextSize(15);
-        subtitle.setTextColor(Color.rgb(135, 105, 112));
+        subtitle.setText("החבר הבא של הכלב שלך מחכה כאן");
+        subtitle.setTextSize(14);
+        subtitle.setTextColor(muted);
         subtitle.setGravity(Gravity.CENTER);
 
         LinearLayout.LayoutParams subParams =
-                new LinearLayout.LayoutParams(
-                        -1, -2
-                );
-        subParams.setMargins(0, dp(8), 0, dp(28));
+                new LinearLayout.LayoutParams(-1, -2);
+        subParams.setMargins(0, dp(8), 0, dp(27));
         root.addView(subtitle, subParams);
 
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(22), dp(25), dp(22), dp(25));
-        card.setBackground(rounded(Color.WHITE, 24));
+        card.setBackground(rounded(white, 24));
         card.setElevation(dp(5));
 
         TextView cardTitle = new TextView(this);
@@ -97,30 +122,41 @@ public class LoginActivity extends Activity {
         login.setText("התחברות");
         login.setTextSize(17);
         login.setTypeface(null, Typeface.BOLD);
-        login.setTextColor(Color.WHITE);
+        login.setTextColor(white);
         login.setAllCaps(false);
-        login.setBackground(rounded(pink, 16));
+        login.setBackground(rounded(orange, 16));
 
         LinearLayout.LayoutParams buttonParams =
-                new LinearLayout.LayoutParams(-1, dp(54));
+                new LinearLayout.LayoutParams(-1, dp(55));
         buttonParams.setMargins(0, dp(25), 0, 0);
         card.addView(login, buttonParams);
 
         root.addView(card, new LinearLayout.LayoutParams(-1, -2));
 
-        TextView back = new TextView(this);
-        back.setText("עדיין אין לך חשבון? הרשמה");
-        back.setTextSize(15);
-        back.setTextColor(pink);
-        back.setGravity(Gravity.CENTER);
-        back.setPadding(0, dp(25), 0, dp(10));
-        root.addView(back);
+        TextView register = new TextView(this);
+        register.setText("עדיין אין לך חשבון? הרשמה");
+        register.setTextSize(15);
+        register.setTextColor(orange);
+        register.setTypeface(null, Typeface.BOLD);
+        register.setGravity(Gravity.CENTER);
+        register.setPadding(0, dp(25), 0, dp(10));
+        root.addView(register);
 
-        back.setOnClickListener(v -> {
-            startActivity(new Intent(this, RegisterActivity.class));
-        });
+        TextView footer = new TextView(this);
+        footer.setText("A better friend for every dog. 🐾");
+        footer.setTextSize(12);
+        footer.setTextColor(muted);
+        footer.setGravity(Gravity.CENTER);
+        root.addView(footer);
 
         setContentView(root);
+
+        register.setOnClickListener(v -> {
+            startActivity(new Intent(
+                    LoginActivity.this,
+                    RegisterActivity.class
+            ));
+        });
 
         login.setOnClickListener(v -> {
 
@@ -137,35 +173,72 @@ public class LoginActivity extends Activity {
             login.setEnabled(false);
             login.setText("מתחברים...");
 
-            mAuth.signInWithEmailAndPassword(userEmail, userPassword)
-                    .addOnCompleteListener(task -> {
+            mAuth.signInWithEmailAndPassword(
+                    userEmail, userPassword
+            ).addOnCompleteListener(task -> {
 
-                        if (task.isSuccessful()) {
+                if (task.isSuccessful()) {
 
-                            Toast.makeText(this,
-                                    "התחברת בהצלחה! ❤️",
-                                    Toast.LENGTH_SHORT).show();
+                    if (mAuth.getCurrentUser() == null) {
+                        login.setEnabled(true);
+                        login.setText("התחברות");
+                        return;
+                    }
 
-                            startActivity(new Intent(
-                                    LoginActivity.this,
-                                    ProfileActivity.class
-                            ));
-                            finish();
+                    String uid = mAuth.getCurrentUser().getUid();
 
-                        } else {
+                    checkUserProfile(uid, login);
 
-                            login.setEnabled(true);
-                            login.setText("התחברות");
+                } else {
 
-                            Toast.makeText(this,
-                                    "האימייל או הסיסמה אינם נכונים",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    login.setEnabled(true);
+                    login.setText("התחברות");
+
+                    Toast.makeText(this,
+                            "האימייל או הסיסמה אינם נכונים",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
         });
     }
 
+    private void checkUserProfile(String uid, Button login) {
+
+        db.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(document -> {
+
+                    Intent intent;
+
+                    if (document.exists()) {
+                        intent = new Intent(
+                                LoginActivity.this,
+                                HomeActivity.class
+                        );
+                    } else {
+                        intent = new Intent(
+                                LoginActivity.this,
+                                ProfileActivity.class
+                        );
+                    }
+
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(error -> {
+
+                    login.setEnabled(true);
+                    login.setText("התחברות");
+
+                    Toast.makeText(this,
+                            "לא הצלחנו לבדוק את הפרופיל. נסה שוב.",
+                            Toast.LENGTH_LONG).show();
+                });
+    }
+
     private TextView createLabel(String text) {
+
         TextView label = new TextView(this);
         label.setText(text);
         label.setTextSize(14);
@@ -182,23 +255,27 @@ public class LoginActivity extends Activity {
     }
 
     private EditText createField(String hint) {
+
         EditText field = new EditText(this);
         field.setHint(hint);
         field.setTextSize(15);
         field.setTextColor(dark);
-        field.setHintTextColor(Color.rgb(165, 145, 150));
+        field.setHintTextColor(muted);
         field.setSingleLine(true);
         field.setPadding(dp(15), 0, dp(15), 0);
         field.setBackground(rounded(
-                Color.rgb(255, 248, 247), 13
+                Color.rgb(250, 247, 242), 13
         ));
+
         field.setLayoutParams(
                 new LinearLayout.LayoutParams(-1, dp(52))
         );
+
         return field;
     }
 
     private GradientDrawable rounded(int color, int radius) {
+
         GradientDrawable shape = new GradientDrawable();
         shape.setColor(color);
         shape.setCornerRadius(dp(radius));
